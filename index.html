@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCB Viral News</title>
+<link rel="manifest" href="data:application/json,[STRIPPED]
+<meta name="theme-color" content="#FFD700">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MCB News">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+header{background:#c00;color:#fff;padding:12px;text-align:center}
+header h1{font-size:28px}
+nav{display:flex;gap:6px;overflow-x:auto;background:#111;padding:8px}
+nav button{border:0;background:#222;color:#fff;padding:8px 14px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+nav button.active{background:#c00}
+#search{width:92%;max-width:600px;display:block;margin:12px auto;padding:11px;border-radius:25px;border:1px solid #ddd}
+.grid{max-width:1000px;margin:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:14px}
+.card{border:1px solid #eee;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);background:#fff}
+.card img{width:100%;height:180px;object-fit:cover;background:#eee}
+.card video{width:100%;height:220px;background:#000}
+.card div{padding:12px}.cat{color:#c00;font-size:11px;font-weight:bold}
+.btn{background:#c00;color:#fff;border:0;padding:10px 16px;border-radius:20px;margin:4px}
+.btn2{background:#111}
+.admin{max-width:600px;margin:20px auto;padding:16px;border:1px solid #ddd;border-radius:12px}
+input,textarea,select{width:100%;padding:11px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;overflow:auto;padding:16px;z-index:99}
+#modalContent{background:#fff;max-width:700px;margin:20px auto;padding:18px;border-radius:12px}
+#modalContent img{width:100%;border-radius:10px}
+#modalContent video{width:100%;border-radius:10px;background:#000}
+footer{background:#111;color:#fff;text-align:center;padding:20px;margin-top:20px;font-size:13px}
+.post-body a,.card a{color:#0645AD;text-decoration:underline;word-break:break-all}
+.adminBar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #eee;border-radius:50px;padding:6px 12px;max-width:600px;margin:10px auto;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.adminBar img{width:45px;height:45px;border-radius:50%;object-fit:cover;border:2px solid #c00}
+@keyframes goldPulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.goldInstall{background:linear-gradient(135deg,#FFD700,#FFA500)!important;color:#000!important;border:2px solid #FFD700!important;box-shadow:0 0 12px rgba(255,215,0,.8)!important}
+.smallBtn{padding:6px 10px;border-radius:15px;border:0;color:#fff;font-weight:bold;margin:2px;cursor:pointer}
+.visitorRow{display:flex;gap:8px;align-items:center;background:#f9f9f9;padding:8px;border-radius:8px;margin:5px 0;font-size:13px}
+.post-time{font-size:11px;color:#666;margin:4px 0}
+.post-time b{color:#c00}
+#adminBtn{display:inline-block!important;background:#c00!important;color:#fff!important}
+</style></head><body>
+<header><h1>MCB VIRAL NEWS</h1><p>Zimbabwe's Hottest News</p></header>
+<div style="background:#ff0;padding:8px;text-align:center;font-weight:bold">🔥 BREAKING: Welcome to MCB Viral News!</div>
+<div class="adminBar">
+<img id="adminPic" src="https://picsum.photos/100/100?random=MCB">
+<div style="flex:1;text-align:left"><b id="adminName">MCB Viral News</b><br><span style="font-size:12px;color:#666"><span id="adminFollowers">1,240</span> Followers • 🇿🇼 Harare</span></div>
+<button id="followBtn" onclick="doFollow()" style="background:#c00;color:#fff;border:0;padding:8px 16px;border-radius:20px;font-weight:bold">❤️ FOLLOW</button>
+<button id="installBtn" onclick="doInstall()" class="goldInstall" style="padding:8px 14px;border-radius:20px;font-weight:bold">⭐ 📲 INSTALL APP</button>
+</div>
+<p id="followMsg" style="text-align:center;font-size:12px;color:green"></p>
+<div id="installBanner" style="display:none;background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;text-align:center;padding:12px 10px;margin:8px 12px;border-radius:15px;box-shadow:0 4px 15px rgba(255,180,0,.5);animation:goldPulse 1.2s infinite">
+<div style="font-size:28px">⭐📲⭐</div>
+<b style="font-size:16px">INSTALL MCB VIRAL NEWS APP - FREE!</b><br>
+<span style="font-size:12px">Tap below to install - Get news faster, no browser needed!</span><br>
+<button onclick="doInstall()" style="background:#000;color:#FFD700;border:0;padding:10px 22px;border-radius:25px;font-weight:bold;margin-top:8px;font-size:15px;box-shadow:0 0 10px #000">⭐ 📲 TAP TO INSTALL MCB APP ⭐</button>
+<div style="font-size:11px;margin-top:4px" onclick="hideInstallBanner()">No thanks, I will read on browser ✕</div>
+</div>
+<nav><button class="active" onclick="filterCat('All',this)">All</button>
+<button onclick="filterCat('Breaking',this)">Breaking</button>
+<button onclick="filterCat('Entertainment',this)">Entertainment 🎬</button>
+<button onclick="filterCat('Sports',this)">Sports</button>
+<button onclick="filterCat('Politics',this)">Politics</button>
+<button onclick="filterCat('Celebrity',this)">Celebrity</button>
+<button onclick="filterCat('Local',this)">Local</button></nav>
+<input id="search" placeholder="Search news..." oninput="render()">
+<div style="text-align:center"><button id="adminBtn" class="btn" onclick="showAdmin()">🔐 Admin / Post News</button>
+<button class="btn btn2" onclick="showHome()">Home</button></div>
+<div id="home"><div class="grid" id="list"></div><p id="empty" style="text-align:center;padding:30px;color:#888"></p></div>
+<div id="applyBox" class="admin" style="display:none;max-width:600px">
+<h3>✍️ Apply To Post News / Adverts</h3>
+<p style="font-size:12px;color:#666">Only Admin can post. Others must apply. Approved authors stay under Admin watch.</p>
+<input id="applyName" placeholder="Your Full Name">
+<input id="applyContact" placeholder="Your WhatsApp / Phone / Email">
+<textarea id="applyWhy" rows="3" placeholder="What do you want to post? News / Adverts / Other?"></textarea>
+<button class="btn" onclick="applyAuthor()">📩 APPLY FOR AUTHORISATION</button><p id="applyMsg"></p>
+</div>
+<div id="admin" class="admin" style="display:none">
+<div id="loginBox">
+<h2>Admin Login</h2>
+<input id="email" placeholder="Your Email">
+<input id="pass" type="password" placeholder="Password">
+<button class="btn" onclick="signup()">Sign Up</button>
+<button class="btn btn2" onclick="login()">Login</button>
+<button class="btn" onclick="logout()">Logout</button>
+<button class="btn btn2" onclick="forgotPassword()" style="background:#FFA500;color:#000">🔑 Forgot Password?</button>
+<p id="authMsg" style="color:#c00;font-weight:bold"></p>
+<p style="font-size:12px;color:#666">New user? Sign Up first. Admin is the first account. Others must Apply below.</p>
+</div>
+<div id="adminPanel" style="display:none"><p id="loggedAs" style="font-weight:bold;color:green"></p><button class="btn" onclick="logout()">Logout</button><hr></div>
+<hr>
+<h3>⚙️ Admin Profile Settings</h3>
+<input id="setName" placeholder="Admin Name - e.g. MCB Viral News">
+<input id="setPic" placeholder="Profile Pic Link - paste image URL">
+<button class="btn" onclick="saveAdminProfileUrl()">💾 SAVE URL PIC</button>
+<div style="display:flex;gap:8px"><button class="btn btn2" onclick="document.getElementById('picGallery').click()" style="flex:1">🖼️ GALLERY</button><button class="btn btn2" onclick="document.getElementById('picCamera').click()" style="flex:1">📷 CAMERA</button></div>
+<input type="file" id="picGallery" accept="image/*" style="display:none">
+<input type="file" id="picCamera" accept="image/*" capture="environment" style="display:none">
+<img id="picPreview" style="display:none;width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid #c00;margin:6px auto">
+<input id="setFollowers" placeholder="Followers Number - e.g. 1240">
+<button class="btn btn2" onclick="saveAdminProfile()">SAVE PROFILE SETTINGS</button><p id="setMsg"></p><hr>
+<h3>👥 Visitors / Users - Admin Only</h3>
+<p style="font-size:12px;color:#666">Names + contacts of people who comment / apply. Block to stop them commenting / liking.</p>
+<div id="visitorsList"><p style="color:#888">Loading visitors...</p></div>
+<button class="btn btn2" onclick="loadVisitors()">🔄 Refresh Visitors</button><hr>
+<div id="applicationsList"></div><hr>
+<h3>Post New Story</h3>
+<input id="title" placeholder="Headline">
+<select id="category"><option>Breaking</option><option>Entertainment</option><option>Sports</option><option>Politics</option><option>Celebrity</option><option>Local</option></select>
+<textarea id="body" rows="5" placeholder="Write full story... Paste WhatsApp / Facebook / YouTube links - they will become clickable!"></textarea>
+<label>Photo:</label><input type="file" id="photo" accept="image/*">
+<input id="imgUrl" placeholder="OR paste image link">
+<label style="color:#c00;font-weight:bold">🎬 Video - URL OR Gallery OR Camera - Plays Inside MCB:</label>
+<input id="videoUrl" placeholder="Paste YouTube link OR MP4 link">
+<div style="display:flex;gap:8px"><button type="button" class="btn btn2" onclick="document.getElementById('videoGallery').click()" style="flex:1">🎬 📁 GALLERY VIDEO</button><button type="button" class="btn btn2" onclick="document.getElementById('videoCamera').click()" style="flex:1">🎬 📷 CAMERA VIDEO</button></div>
+<input type="file" id="videoGallery" accept="video/*" style="display:none">
+<input type="file" id="videoCamera" accept="video/*" capture="environment" style="display:none">
+<video id="videoPreview" controls playsinline style="display:none;width:100%;height:200px;background:#000;border-radius:10px;margin-top:6px"></video>
+<p id="videoMsg" style="font-size:12px;color:green"></p>
+<p style="font-size:11px;color:#666">Gallery/Camera video must be under 8MB. For bigger video, use YouTube link above.</p>
+<button class="btn" onclick="publish()">PUBLISH STORY</button><p id="pubMsg"></p>
+<div id="myPosts"></div></div>
+<div id="modal" onclick="if(event.target==this)closeModal()"><div id="modalContent"></div></div>
+<footer>© 2026 MCB Viral News • Harare, Zimbabwe<br><a href="https://mcb-viral-news-com.netlify.app" style="color:#fff">mcb-viral-news-com.netlify.app</a></footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyDUslVZY1fRat0o1RtRrweZGyhsypK2Q7Y",authDomain:"mcb-viral-news.firebaseapp.com",projectId:"mcb-viral-news",storageBucket:"mcb-viral-news.firebasestorage.app",messagingSenderId:"201734791725",appId:"1:201734791725:web:e4e67d471129005087cea4",measurementId:"G-N7NR65TRTX"};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+let all=[],curCat='All',imgBase64='',adminPicBase64='',videoBase64='';
+let likes=JSON.parse(localStorage.getItem('mcb_likes')||'{}');
+let likeTimes=JSON.parse(localStorage.getItem('mcb_like_times')||'{}');
+let deferredPrompt=null;
+const SITE_LINK='https://mcb-viral-news-com.netlify.app';
+const ADMIN_SECRET='MCB2026';
+function isAdminMode(){return sessionStorage.getItem('mcb_admin_mode')==='yes'}
+function unlockAdmin(){let b=document.getElementById('adminBtn');if(b)b.style.display='inline-block'}
+function checkAdminUrl(){try{let u=new URLSearchParams(location.search);if(u.get('admin')===ADMIN_SECRET){sessionStorage.setItem('mcb_admin_mode','yes');history.replaceState({},'',location.pathname)}}catch(e){}if(isAdminMode())unlockAdmin()}
+checkAdminUrl();
+function toDateObj(v){if(!v)return null;try{if(v.toDate)return v.toDate();if(v.seconds)return new Date(v.seconds*1000);if(typeof v==='string'||typeof v==='number'){let d=new Date(v);return isNaN(d)?null:d}}catch(e){}return null}
+function formatPostDate(v){let d=toDateObj(v);if(!d)return '🕒 Just now';try{return '🕒 '+d.toLocaleString('en-GB',{timeZone:'Africa/Harare',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true})}catch(e){return '🕒 '+d.toLocaleString()}}
+function timeAgoText(v){let d=toDateObj(v);if(!d)return '';let s=Math.floor((Date.now()-d.getTime())/1000);if(s<60)return ' • Just now';if(s<3600)return ' • '+Math.floor(s/60)+'m ago';if(s<86400)return ' • '+Math.floor(s/3600)+'h ago';if(s<86400*30)return ' • '+Math.floor(s/86400)+'d ago';return ''}
+function fullDateLine(v){return formatPostDate(v)+timeAgoText(v)}
+function friendlyErr(e){let c=e.code||'';if(c.includes('invalid-email'))return '⚠️ Please enter a valid email address, e.g. name@gmail.com';if(c.includes('wrong-password')||c.includes('invalid-credential'))return '⚠️ Wrong email or password. Try again or tap Forgot Password.';if(c.includes('user-not-found'))return '⚠️ No account with that email. Please Sign Up first.';if(c.includes('email-already-in-use'))return '⚠️ That email already has an account. Please Login.';if(c.includes('weak-password'))return '⚠️ Password must be at least 6 characters.';if(c.includes('too-many-requests'))return '⚠️ Too many tries. Wait a bit then try again.';return '⚠️ '+(e.message||'Something went wrong. Try again.');}
+function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function linkify(s){let t=escapeHtml(s);t=t.replace(/(https?:\/\/[^\s<]+|www\.[^\s<]+)/g,(m)=>{let h=m.startsWith('http')?m:'https://'+m;return '<a href="'+h+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+m+'</a>'});return t;}
+function loadAdminProfile(){let n=localStorage.getItem('mcb_admin_name')||'MCB Viral News';let p=localStorage.getItem('mcb_admin_pic')||'https://picsum.photos/100/100?random=MCB';let f=localStorage.getItem('mcb_admin_followers')||'1240';document.getElementById('adminName').textContent=n;document.getElementById('adminPic').src=p;document.getElementById('adminFollowers').textContent=Number(f).toLocaleString();if(localStorage.getItem('mcb_followed')=='yes'){document.getElementById('followBtn').textContent='✅ FOLLOWING';document.getElementById('adminFollowers').textContent=(Number(f)+1).toLocaleString()}}
+loadAdminProfile();
+function saveAdminProfile(){let n=document.getElementById('setName').value||localStorage.getItem('mcb_admin_name')||'MCB Viral News';let p=adminPicBase64||document.getElementById('setPic').value||localStorage.getItem('mcb_admin_pic')||'https://picsum.photos/100/100?random=MCB';let f=document.getElementById('setFollowers').value||localStorage.getItem('mcb_admin_followers')||'1240';if(!p||p.length<10)return document.getElementById('setMsg').textContent='⚠️ Pick a pic first - URL, Gallery or Camera';localStorage.setItem('mcb_admin_name',n);localStorage.setItem('mcb_admin_pic',p);localStorage.setItem('mcb_admin_followers',f);loadAdminProfile();document.getElementById('setMsg').textContent='✅ Profile Saved! Go Home to see it.'}
+function saveAdminProfileUrl(){let u=document.getElementById('setPic').value.trim();if(!u)return document.getElementById('setMsg').textContent='⚠️ Paste image URL first';let img=new Image();img.onload=()=>{adminPicBase64=u;localStorage.setItem('mcb_admin_pic',u);loadAdminProfile();document.getElementById('setMsg').textContent='✅ URL Pic Saved!'};img.onerror=()=>{document.getElementById('setMsg').textContent='⚠️ That URL did not load as image. Try another link or use Gallery.'};img.src=u;}
+function handleAdminPicFile(file){if(!file)return;if(file.size>800000)return document.getElementById('setMsg').textContent='⚠️ Pic too big. Pick smaller pic (under 800KB) or use URL.';let r=new FileReader();r.onload=()=>{adminPicBase64=r.result;let pv=document.getElementById('picPreview');pv.src=r.result;pv.style.display='block';localStorage.setItem('mcb_admin_pic',r.result);loadAdminProfile();document.getElementById('setMsg').textContent='✅ Pic loaded! Tap SAVE PROFILE SETTINGS.'};r.readAsDataURL(file)}
+document.getElementById('picGallery').addEventListener('change',e=>handleAdminPicFile(e.target.files[0]));
+document.getElementById('picCamera').addEventListener('change',e=>handleAdminPicFile(e.target.files[0]));
+function doFollow(){localStorage.setItem('mcb_followed','yes');document.getElementById('followMsg').textContent='✅ Thank you for Following MCB!';document.getElementById('followBtn').textContent='✅ FOLLOWING';loadAdminProfile()}
+function hideInstallBanner(){document.getElementById('installBanner').style.display='none';localStorage.setItem('mcb_banner_closed','yes')}
+function showInstallForNewUser(){let alreadyInstalled=localStorage.getItem('mcb_installed')=='yes';let isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;let btn=document.getElementById('installBtn');if(alreadyInstalled||isStandalone){btn.style.display='none';document.getElementById('installBanner').style.display='none';return}btn.style.display='inline-block';btn.innerHTML='⭐ 📲 INSTALL APP';btn.classList.add('goldInstall');if(localStorage.getItem('mcb_banner_closed')!='yes')document.getElementById('installBanner').style.display='block'}
+showInstallForNewUser();
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showInstallForNewUser()});
+window.addEventListener('appinstalled',()=>{localStorage.setItem('mcb_installed','yes');document.getElementById('installBtn').style.display='none';document.getElementById('installBanner').style.display='none'});
+async function doInstall(){if(deferredPrompt){deferredPrompt.prompt();let r=await deferredPrompt.userChoice;if(r.outcome=='accepted'){localStorage.setItem('mcb_installed','yes');document.getElementById('installBtn').style.display='none';document.getElementById('installBanner').style.display='none'}deferredPrompt=null}else{alert('⭐ TO INSTALL MCB APP:\n\n1. Tap 3 dots ⋮ (top right)\n2. Tap Add to Home screen\n3. Tap Add\n\nYou will get GOLD MCB icon on your phone!')}}
+document.getElementById('photo').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>imgBase64=r.result;r.readAsDataURL(f)});
+function handleVideoFile(file){if(!file)return;if(file.size>8000000){document.getElementById('videoMsg').textContent='⚠️ Video too big (over 8MB). Upload to YouTube first, then paste link above.';document.getElementById('videoMsg').style.color='#c00';return}let r=new FileReader();r.onload=()=>{videoBase64=r.result;let pv=document.getElementById('videoPreview');pv.src=r.result;pv.style.display='block';document.getElementById('videoMsg').style.color='green';document.getElementById('videoMsg').textContent='✅ Video loaded! Tap PUBLISH STORY.'};r.readAsDataURL(file)}
+document.getElementById('videoGallery').addEventListener('change',e=>handleVideoFile(e.target.files[0]));
+document.getElementById('videoCamera').addEventListener('change',e=>handleVideoFile(e.target.files[0]));
+db.collection('posts').orderBy('createdAt','desc').onSnapshot(s=>{all=s.docs.map(d=>({id:d.id,...d.data()}));render()});
+function filterCat(c,el){curCat=c;document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));el.classList.add('active');render()}
+function getVideoEmbed(url){if(!url)return '';if(url.startsWith('data:video'))return `<video controls playsinline src="${url}" style="width:100%;height:220px;background:#000"></video>`;if(url.includes('youtube.com/watch')){let id=url.split('v=')[1].split('&')[0];return `<iframe width="100%" height="220" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen style="border-radius:10px"></iframe>`}if(url.includes('youtu.be/')){let id=url.split('youtu.be/')[1].split('?')[0];return `<iframe width="100%" height="220" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen style="border-radius:10px"></iframe>`}if(url.includes('youtube.com/shorts/')){let id=url.split('shorts/')[1].split('?')[0];return `<iframe width="100%" height="220" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen style="border-radius:10px"></iframe>`}return `<video controls playsinline src="${url}" style="width:100%;height:220px;background:#000"></video>`}
+function getBlocked(){return JSON.parse(localStorage.getItem('mcb_blocked')||'[]')}
+function isBlocked(name){return getBlocked().includes((name||'').toLowerCase())}
+function saveVisitor(name,contact){if(!name)return;let v=JSON.parse(localStorage.getItem('mcb_visitors')||'[]');let key=(name+'|'+(contact||'')).toLowerCase();if(!v.find(x=>x.key===key)){v.unshift({key:key,name:name,contact:contact||'',time:new Date().toLocaleString()});localStorage.setItem('mcb_visitors',JSON.stringify(v.slice(0,100)))}}
+function loadVisitors(){let v=JSON.parse(localStorage.getItem('mcb_visitors')||'[]');let box=document.getElementById('visitorsList');if(!box)return;if(!v.length){box.innerHTML='<p style="color:#888">No visitors yet. Visitors appear when they comment or apply.</p>';return}box.innerHTML=v.map(x=>`<div class="visitorRow"><span style="flex:1"><b>${escapeHtml(x.name)}</b><br><span style="color:#666">${escapeHtml(x.contact||'No contact')} • ${x.time}</span></span><button class="smallBtn" style="background:${isBlocked(x.name)?'#111':'#c00'}" onclick="toggleBlock('${escapeHtml(x.name)}')">${isBlocked(x.name)?'🔓 UNBLOCK':'🚫 BLOCK'}</button></div>`).join('')}
+function toggleBlock(name){let b=getBlocked();let k=name.toLowerCase();if(b.includes(k)){b=b.filter(x=>x!==k)}else{b.push(k);alert('🚫 '+name+' blocked.')}localStorage.setItem('mcb_blocked',JSON.stringify(b));loadVisitors();render()}
+async function applyAuthor(){let n=document.getElementById('applyName').value.trim(),c=document.getElementById('applyContact').value.trim(),w=document.getElementById('applyWhy').value.trim();if(!n||!c)return document.getElementById('applyMsg').textContent='⚠️ Enter name + contact';saveVisitor(n,c);try{await db.collection('applications').add({name:n,contact:c,why:w,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){}document.getElementById('applyMsg').textContent='✅ Application sent! Admin will approve / reject.';loadVisitors();loadApplications()}
+async function loadApplications(){let box=document.getElementById('applicationsList');if(!box)return;try{let s=await db.collection('applications').orderBy('createdAt','desc').limit(20).get();if(s.empty){box.innerHTML='';return}box.innerHTML='<h4>Applications (Admin)</h4>'+s.docs.map(d=>{let a=d.data();return `<div class="visitorRow"><span style="flex:1"><b>${escapeHtml(a.name)}</b> - ${escapeHtml(a.contact)}<br>${escapeHtml(a.why||'')} • <b>${a.status}</b><br><span style="font-size:11px;color:#666">${fullDateLine(a.createdAt)}</span></span><button class="smallBtn" style="background:green" onclick="decideApp('${d.id}','${escapeHtml(a.contact)}','approved')">✅ APPROVE</button><button class="smallBtn" style="background:#c00" onclick="decideApp('${d.id}','','rejected')">❌ REJECT</button></div>`}).join('')}catch(e){}}
+async function decideApp(id,contact,status){await db.collection('applications').doc(id).update({status:status});if(status==='approved'&&contact){let ap=JSON.parse(localStorage.getItem('mcb_approved')||'[]');if(!ap.includes(contact.toLowerCase()))ap.push(contact.toLowerCase());localStorage.setItem('mcb_approved',JSON.stringify(ap));alert('✅ Approved! That person can now post. They stay under Admin watch.')}loadApplications()}
+function canPost(email){if(!email)return false;let adminEmail=localStorage.getItem('mcb_admin_email');if(!adminEmail)return true;if(email.toLowerCase()===adminEmail.toLowerCase())return true;let ap=JSON.parse(localStorage.getItem('mcb_approved')||'[]');return ap.includes(email.toLowerCase())}
+function render(){let q=document.getElementById('search').value.toLowerCase();let sorted=[...all].sort((a,b)=>{let sa=(a.views||0)+((a.likesCount||likes[a.id]||0)*2)+((a.comments||[]).length*3)+((a.shares||0)*2);let sb=(b.views||0)+((b.likesCount||likes[b.id]||0)*2)+((b.comments||[]).length*3)+((b.shares||0)*2);return sb-sa});let f=sorted.filter(p=>(curCat=='All'||p.category==curCat)&&((p.title||'')+(p.body||'')).toLowerCase().includes(q));document.getElementById('list').innerHTML=f.map(p=>{let lk=p.likesCount||likes[p.id]||0;let score=(p.views||0)+(lk*2)+((p.comments||[]).length*3);let isViral=score>=10;let badge=isViral?'<div style="background:#c00;color:#fff;padding:5px 10px;border-radius:15px;display:inline-block;font-size:12px;font-weight:bold;margin-bottom:5px">🔥 VIRAL • MCB VIRAL NEWS 🇿🇼</div><br>':'<div style="background:#111;color:#fff;padding:4px 8px;border-radius:12px;display:inline-block;font-size:10px">✅ MCB VIRAL NEWS</div><br>';let media=p.videoUrl?getVideoEmbed(p.videoUrl):`<img src="${p.image||'https://picsum.photos/600/300?random='+p.id}">`;let videoTag=p.videoUrl?'🎬 VIDEO • ':'';return `<div class="card" onclick="openPost('${p.id}')">${media}<div>${badge}<span class="cat">${videoTag}${escapeHtml(p.category||'')}</span><h3>${escapeHtml(p.title)}</h3><div class="post-time"><b>${fullDateLine(p.createdAt)}</b></div><p class="post-body">${linkify((p.body||'').slice(0,120))}...</p><div style="font-size:11px;color:#888">👁️ ${p.views||0} Views • ❤️ ${lk} Likes • 📤 ${p.shares||0} Shares ${p.videoUrl?'• 🎬 Watch Inside MCB':'• 💬 '+(p.comments||[]).length+' Comments'}</div><button onclick="event.stopPropagation();doLike('${p.id}')" style="background:#c00;color:#fff;border:0;padding:8px;border-radius:20px;margin-top:8px;width:48%">❤️ LIKE ${lk}</button><button onclick="event.stopPropagation();shareWithPic('${p.id}')" style="background:#25D366;color:#fff;border:0;padding:8px;border-radius:20px;margin-top:8px;width:48%;float:right">📤 SHARE</button></div></div>`}).join('');document.getElementById('empty').textContent=f.length?'':'No stories yet. Tap Admin to post!';if(!isAdminMode()){let ab=document.getElementById('applyBox');if(ab)ab.style.display='block'}}
+function openPost(id){let p=all.find(x=>x.id==id);if(!p)return;db.collection('posts').doc(id).update({views:(p.views||0)+1});let media=p.videoUrl?getVideoEmbed(p.videoUrl):`<img src="${p.image||''}">`;let commentsSection=p.videoUrl?`<hr><p style="text-align:center;color:#888">🎬 Video Post - Likes, Views & Shares Only</p>`:`<hr><h3>Comments</h3><div>${(p.comments||[]).map(c=>`<p style="background:#f5f5f5;padding:8px;border-radius:8px;margin:5px 0"><b>${escapeHtml(c.name)}:</b> <span class="post-body">${linkify(c.text)}</span><br><span style="font-size:11px;color:#888">${c.createdAt?fullDateLine(c.createdAt):''}</span></p>`).join('')||'No comments'}</div><input id="cName" placeholder="Your name"><input id="cText" placeholder="Write comment..."><button class="btn" onclick="addComment('${id}')">Post Comment</button>`;document.getElementById('modal').style.display='block';document.getElementById('modalContent').innerHTML=`<button onclick="closeModal()" style="float:right">X</button><span class="cat">${escapeHtml(p.category)}</span><h2>${escapeHtml(p.title)}</h2><div class="post-time"><b>${fullDateLine(p.createdAt)}</b></div>${media}<p class="post-body" style="margin:14px 0;line-height:1.7;white-space:pre-wrap">${linkify(p.body)}</p><div style="display:flex;gap:8px;align-items:center"><img src="${document.getElementById('adminPic').src}" style="width:40px;height:40px;border-radius:50%"><b>${document.getElementById('adminName').textContent}</b><button onclick="doFollow()" style="background:#c00;color:#fff;border:0;padding:6px 14px;border-radius:20px;margin-left:auto">❤️ FOLLOW</button></div><br><button onclick="doLike('${id}')" style="background:#c00;color:#fff;border:0;padding:10px 18px;border-radius:20px">❤️ LIKE - <span id="likeNum">${p.likesCount||likes[id]||0}</span></button><span style="margin-left:10px">👁️ ${p.views||0} Views • 📤 ${p.shares||0} Shares</span>${commentsSection}<br><button class="btn" onclick="shareWithPic('${id}')">Share With Pic + MCB Logo</button>`}
+async function doLike(id){let now=Date.now();let last=likeTimes[id]||0;if(now-last<24*60*60*1000){alert('⚠️ You already liked this story. You can like again after 24 hours.');return}let p=all.find(x=>x.id==id);likeTimes[id]=now;localStorage.setItem('mcb_like_times',JSON.stringify(likeTimes));likes[id]=(likes[id]||0)+1;localStorage.setItem('mcb_likes',JSON.stringify(likes));let newCount=(p&&p.likesCount!==undefined)?p.likesCount+1:likes[id];try{await db.collection('posts').doc(id).update({likesCount:newCount})}catch(e){}let el=document.getElementById('likeNum');if(el)el.textContent=newCount;render()}
+function closeModal(){document.getElementById('modal').style.display='none'}
+async function shareWithPic(id){let p=all.find(x=>x.id==id);let lk=p.likesCount||likes[id]||0;let txt=`🔥 ${p.title}\n\n${(p.body||'').slice(0,200)}\n\n🕒 ${fullDateLine(p.createdAt)}\n👁️ ${p.views||0} Views • ❤️ ${lk} Likes\n\n🇿🇼 MCB VIRAL NEWS\n✅ Read More: ${SITE_LINK}\n❤️ Follow MCB Viral News`;try{await db.collection('posts').doc(id).update({shares:(p.shares||0)+1})}catch(e){}try{let res=await fetch(p.image||'https://picsum.photos/600/400');let blob=await res.blob();let file=new File([blob],'mcb-news.jpg',{type:'image/jpeg'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:'MCB VIRAL NEWS 🇿🇼',text:txt,url:SITE_LINK,files:[file]});return}}catch(e){}window.open('https://wa.me/?text='+encodeURIComponent(txt))}
+async function addComment(id){let n=document.getElementById('cName').value.trim()||'Anonymous',tx=document.getElementById('cText').value.trim();if(!tx)return alert('Write comment');if(isBlocked(n))return alert('🚫 You are blocked by Admin.');saveVisitor(n,'Comment on '+id);let p=all.find(x=>x.id==id);let arr=p.comments||[];arr.push({name:n,text:tx,createdAt:new Date().toISOString()});await db.collection('posts').doc(id).update({comments:arr});openPost(id);loadVisitors()}
+function showAdmin(){if(!isAdminMode()){let code=prompt('🔐 Admin Code:');if(code===ADMIN_SECRET){sessionStorage.setItem('mcb_admin_mode','yes');unlockAdmin()}else{alert('❌ Wrong code. Admin only.');return}}document.getElementById('home').style.display='none';document.getElementById('admin').style.display='block';let ab=document.getElementById('applyBox');if(ab)ab.style.display='none';setTimeout(()=>{loadAdminList();loadVisitors();loadApplications()},800)}
+function showHome(){document.getElementById('home').style.display='block';document.getElementById('admin').style.display='none';if(!isAdminMode()){let ab=document.getElementById('applyBox');if(ab)ab.style.display='block'}}
+async function signup(){try{await auth.createUserWithEmailAndPassword(email.value,pass.value);if(!localStorage.getItem('mcb_admin_email'))localStorage.setItem('mcb_admin_email',email.value.toLowerCase());authMsg.style.color='green';authMsg.textContent='✅ Account created! You are logged in.'}catch(e){authMsg.style.color='#c00';authMsg.textContent=friendlyErr(e)}}
+async function login(){try{await auth.signInWithEmailAndPassword(email.value,pass.value);authMsg.style.color='green';authMsg.textContent='✅ Logged in!'}catch(e){authMsg.style.color='#c00';authMsg.textContent=friendlyErr(e)}}
+async function logout(){await auth.signOut();authMsg.textContent='Logged out'}
+async function forgotPassword(){let em=document.getElementById('email').value.trim();if(!em||!em.includes('@'))return authMsg.textContent='⚠️ Enter your email first, then tap Forgot Password.';try{await auth.sendPasswordResetEmail(em);authMsg.style.color='green';authMsg.textContent='✅ Reset link sent to '+em+'. Check inbox / spam.'}catch(e){authMsg.style.color='#c00';authMsg.textContent=friendlyErr(e)}}
+async function publish(){if(!auth.currentUser)return pubMsg.textContent='Login first!';let em=auth.currentUser.email||'';if(!canPost(em))return pubMsg.textContent='⚠️ Only Admin can post. Approved authors only. Tap APPLY FOR AUTHORISATION above.';if(!title.value||!body.value)return pubMsg.textContent='Add title + story';pubMsg.textContent='Publishing...';await db.collection('posts').add({title:title.value,category:category.value,body:body.value,image:imgBase64||imgUrl.value||'',videoUrl:videoBase64||videoUrl.value||'',views:0,likesCount:0,shares:0,comments:[],author:em,createdAt:firebase.firestore.FieldValue.serverTimestamp()});pubMsg.textContent='PUBLISHED! Go Home to see it.';title.value='';body.value='';videoUrl.value='';videoBase64='';document.getElementById('videoPreview').style.display='none';document.getElementById('videoMsg').textContent=''}
+async function loadAdminList(){if(!auth.currentUser)return;let box=document.getElementById('myPosts');if(!box)return;box.innerHTML='<h3>Manage Your Posts</h3>';all.forEach(p=>{let d=document.createElement('div');d.style.cssText='background:#f9f9f9;padding:10px;border-radius:8px;margin:6px 0';d.innerHTML=`<b>${escapeHtml(p.title)}</b> ${p.videoUrl?'🎬 VIDEO':''} <span style="font-size:11px;color:#888">${escapeHtml(p.author||'')}</span><br><span style="font-size:11px;color:#666">${fullDateLine(p.createdAt)}</span><br><button onclick="editPost('${p.id}')" style="background:#111;color:#fff;border:0;padding:6px 12px;border-radius:15px;margin:4px">✏️ EDIT</button><button onclick="delPost('${p.id}')" style="background:#c00;color:#fff;border:0;padding:6px 12px;border-radius:15px">🗑️ DELETE</button>`;box.appendChild(d)})}
+function editPost(id){let p=all.find(x=>x.id==id);document.getElementById('title').value=p.title;document.getElementById('body').value=p.body;document.getElementById('category').value=p.category;document.getElementById('videoUrl').value=(p.videoUrl||'').startsWith('data:')?'':(p.videoUrl||'');document.getElementById('pubMsg').textContent='Editing: '+p.title;window.scrollTo(0,0)}
+async function delPost(id){if(confirm('Delete this story FOREVER?'))await db.collection('posts').doc(id).delete()}
+auth.onAuthStateChanged(u=>{let lb=document.getElementById('loginBox'),ap=document.getElementById('adminPanel');if(u){if(lb)lb.style.display='none';if(ap){ap.style.display='block';document.getElementById('loggedAs').textContent='✅ Logged in as: '+u.email+' '+(canPost(u.email)?'(Can Post)':'(Not authorised to post - Apply above)')}setTimeout(()=>{loadAdminList();loadVisitors();loadApplications()},1000)}else{if(lb)lb.style.display='block';if(ap)ap.style.display='none'}});
+loadVisitors();
+</script></body></html>
